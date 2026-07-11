@@ -1,12 +1,14 @@
 import './App.css'
+import atlasLogo from './assets/atlas_logo.png'
 
 function App() {
   return (
     <main className="home-shell">
       <header className="topbar" aria-label="Atlas Flow navigation">
         <a className="brand" href="/" aria-label="Atlas Flow home">
-          <span className="brand-mark">AF</span>
-          <span>Atlas Flow</span>
+          <span className="brand-logo" aria-hidden="true">
+            <img src={atlasLogo} alt="" className="brand-mark" />
+          </span>
         </a>
 
         <a className="signin-link" href="/login">
