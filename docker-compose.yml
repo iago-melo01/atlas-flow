@@ -1,0 +1,71 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: atlas_flow_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: atlas_flow
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+    volumes:
+      - atlas_flow_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d atlas_flow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: atlas_flow_backend
+    restart: unless-stopped
+    working_dir:  /var/www/html
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+      - /var/www/html/vendor
+      
+    environment:
+      APP_NAME: "Atlas Flow"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: atlas_flow
+      DB_USERNAME: user
+      DB_PASSWORD: user
+      FRONTEND_URL: http://localhost:5173
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+        php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+      "
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: atlas_flow_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:8000/api
+    depends_on:
+      - backend
+    
+volumes:
+  atlas_flow_pgdata:
+    
+    
