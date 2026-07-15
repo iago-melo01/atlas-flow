@@ -4,18 +4,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
     public function login(LoginRequest $request){
-        $credentials = $request->validated();
-        if(!Auth::attempt($credentials)){
-            throw ValidationException::withMessages([
-                'email' => ['As credenciais fornecidas são inválidas]']
-            ]);
-        }
+        
+        $request->authenticate();
 
         $request->session()->regenerate();
 
