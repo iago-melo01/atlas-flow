@@ -46,7 +46,9 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
-        if(!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))){
+
+        $email = $this->normalizedEmail();
+        if(!Auth::attempt(['email' => $email, 'password' => (string) $this->input('password') ], $this->boolean('remember'))){
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -73,7 +75,7 @@ class LoginRequest extends FormRequest
     }
 
     protected function normalizedEmail() : string {
-        return (string) Str::transliterate(Str::trim(Str::lower($this->input('email'))));
+        return (string) Str::trim(Str::transliterate(Str::lower($this->input('email'))));
     }
 
     public function throttleKey() : string{
