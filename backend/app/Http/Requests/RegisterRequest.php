@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Support\Str;
 class RegisterRequest extends FormRequest
 {
     /**
@@ -15,6 +15,16 @@ class RegisterRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void  // esse método sempre roda antes das rules
+    {
+        $this->merge(['email' => $this->normalizedEmail()]);
+    }
+
+
+    private function normalizedEmail(): string
+    {
+        return (string) Str::trim(Str::transliterate(Str::lower($this->input('email'))));
+    }
     /**
      * Get the validation rules that apply to the request.
      *
