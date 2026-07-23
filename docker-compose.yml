@@ -62,10 +62,11 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      VITE_API_URL: http://localhost:8000/api
+      VITE_BACKEND_URL: http://localhost:8000
     depends_on:
       - backend
-    
+    command: >
+      sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
 volumes:
   atlas_flow_pgdata:
     
