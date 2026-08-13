@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\Habits\Habit;
+use App\Models\Habits\HabitCheckIn;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -30,5 +32,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function habits(){
+        return $this->hasMany(Habit::class);
+    }
+
+    public function checkIns(){
+        return $this->hasMany(HabitCheckIn::class);
     }
 }
