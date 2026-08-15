@@ -13,7 +13,22 @@ return new class extends Migration
     {
         Schema::create('habits', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('icon', 16);
+            $table->boolean('is_active')->default(true);
+            $table->string('cadence_type')->default('daily');
+            $table->json('cadence_config')->nullable();
             $table->timestamps();
+
+            $table->foreignId('user_id')
+            ->constrained(); // constrained garante que o user_id recebido, existe na tabela users
+
+            $table->foreignId('habit_template_id')
+            ->nullable()
+            ->constrained('habit_templates')
+            ->nullOnDelete();
         });
     }
 

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\CadenceType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +16,7 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('icon');
+            $table->string('icon', 16);
             $table->string('cadence_type');
             $table->json('cadence_config')->nullable();
             $table->boolean('is_active')->default(true);
