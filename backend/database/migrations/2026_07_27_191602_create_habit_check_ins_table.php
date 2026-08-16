@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('habit_check_ins', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
+            $table->foreignId('habit_id');
+            $table->foreignId('user_id');
+            $table->date('check_in_date');
+            $table->date('completed_at');
             $table->timestamps();
         });
     }
