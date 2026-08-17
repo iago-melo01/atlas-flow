@@ -6,7 +6,7 @@ enum CadenceType: string
 {
     case DAILY = 'daily';
     case WEEKLY = 'weekly';
-    case MONTHLY = 'monthly';
+    case CUSTOM = 'custom';
 
     public static function values(): array
     {
@@ -18,7 +18,7 @@ enum CadenceType: string
         return match($this){
             self::DAILY => 'Diário',
             self::WEEKLY => 'Semanal',
-            self::MONTHLY => 'Mensal',
+            self::CUSTOM => 'Personalizado',
         };    
     }    
 

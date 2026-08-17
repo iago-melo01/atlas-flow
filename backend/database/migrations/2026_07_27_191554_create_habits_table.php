@@ -23,12 +23,18 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreignId('user_id')
-            ->constrained(); // constrained garante que o user_id recebido, existe na tabela users
+            ->constrained()// constrained garante que o user_id recebido, existe na tabela users
+            ->cascadeOnDelete(); 
 
             $table->foreignId('habit_template_id')
             ->nullable()
             ->constrained('habit_templates')
             ->nullOnDelete();
+
+            $table->index(['user_id', 'is_active']);
+            $table->index('habit_template_id');
+
+            
         });
     }
 
