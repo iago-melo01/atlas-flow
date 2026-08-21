@@ -3,6 +3,7 @@
 
 namespace App\Models\Habits;
 
+use App\Enums\CadenceType;
 use App\Models\User;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -16,6 +17,7 @@ class Habit extends Model
     protected function casts(): array
     {
         return [
+            'cadence_type' => CadenceType::class,
             'cadence_config' => 'array',
             'is_active' => 'boolean',
         ];
