@@ -1,0 +1,433 @@
+.habits-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.habit-open-create {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  color: #07110b;
+  font-weight: 800;
+  background: var(--color-success);
+  cursor: pointer;
+}
+
+.habit-open-create:hover {
+  background: #53e58f;
+}
+
+.habit-open-create:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 4px;
+}
+
+.habits-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.habits-layout.is-create-open {
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+}
+
+.habits-status,
+.habits-status-card,
+.habit-empty {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 22px;
+  background: var(--color-surface);
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.habits-status-card,
+.habit-empty {
+  display: grid;
+  gap: 12px;
+}
+
+.habit-empty p {
+  margin: 0;
+}
+
+.habits-retry {
+  width: fit-content;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text);
+  background: var(--color-input);
+  cursor: pointer;
+}
+
+.habits-retry:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 3px;
+}
+
+.habit-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.habit-card {
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 22px;
+  background: var(--color-surface);
+}
+
+.habit-card.is-just-added {
+  animation: habit-arrive 600ms ease-out;
+}
+
+.habit-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.habit-card-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.habit-card h2 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.03em;
+}
+
+.habit-card-description {
+  margin: 10px 0 0;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.habit-card-cadence {
+  margin: 12px 0 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.habit-composer {
+  display: grid;
+  gap: 18px;
+  animation: composer-in 200ms ease-out;
+}
+
+.habit-composer.is-closing {
+  animation: composer-out 200ms ease-out forwards;
+}
+
+.habit-draft {
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 22px;
+  background: var(--color-surface);
+}
+
+.habit-icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.habit-icon-picker button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-size: 22px;
+  line-height: 1;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.habit-icon-picker button.is-selected {
+  border-color: var(--color-border);
+  background: var(--color-surface-elevated);
+  font-size: 28px;
+}
+
+.habit-draft-name,
+.habit-draft-caption {
+  width: 100%;
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text);
+}
+
+.habit-draft-name {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.habit-draft-caption {
+  margin-top: 8px;
+  color: var(--color-muted);
+}
+
+.habit-draft-name::placeholder,
+.habit-draft-caption::placeholder {
+  color: var(--color-muted);
+  opacity: 0.72;
+}
+
+.habit-draft-name:focus-visible,
+.habit-draft-caption:focus-visible,
+.habit-icon-picker button:focus-visible,
+.habit-cadence-tabs button:focus-visible,
+.habit-week button:focus-visible,
+.habit-stepper button:focus-visible,
+.habit-discard:focus-visible,
+.habit-submit:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 3px;
+}
+
+.habit-draft-name[aria-invalid='true'],
+.habit-draft-caption[aria-invalid='true'] {
+  color: var(--color-danger);
+}
+
+.habit-composer-controls {
+  display: grid;
+  gap: 14px;
+}
+
+.habit-cadence-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.habit-cadence-tabs button {
+  padding: 0;
+  border: 0;
+  color: var(--color-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.habit-cadence-tabs button.is-selected {
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.habit-cadence-reveal {
+  animation: cadence-in 180ms ease-out;
+}
+
+.habit-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.habit-week button {
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  color: var(--color-muted);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--color-input);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.habit-week button.is-selected {
+  border-color: var(--color-border);
+  color: var(--color-text);
+  background: var(--color-surface-elevated);
+}
+
+.habit-stepper {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 10px;
+}
+
+.habit-stepper p {
+  display: grid;
+  margin: 0;
+  text-align: center;
+}
+
+.habit-stepper strong {
+  font-size: 28px;
+  letter-spacing: -0.04em;
+}
+
+.habit-stepper span {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.habit-stepper button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  color: var(--color-text);
+  background: var(--color-input);
+  cursor: pointer;
+}
+
+.habit-stepper button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.habit-field-error,
+.habit-form-error {
+  margin: 8px 0 0;
+  color: var(--color-danger);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.habit-composer-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.habit-discard {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  color: var(--color-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.habit-discard:hover:not(:disabled) {
+  color: var(--color-text);
+}
+
+.habit-discard:disabled,
+.habit-submit:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.habit-submit {
+  min-height: 48px;
+  border: none;
+  border-radius: 999px;
+  color: #07110b;
+  font-weight: 800;
+  background: var(--color-success);
+  cursor: pointer;
+}
+
+.habit-submit:hover:not(:disabled) {
+  background: #53e58f;
+}
+
+@keyframes composer-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes composer-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes cadence-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes habit-arrive {
+  from {
+    border-color: rgba(54, 209, 118, 0.55);
+  }
+
+  to {
+    border-color: var(--color-border);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .habit-composer,
+  .habit-composer.is-closing,
+  .habit-cadence-reveal,
+  .habit-card.is-just-added {
+    animation: none;
+  }
+
+  .habit-icon-picker button,
+  .habit-week button,
+  .habit-cadence-tabs button,
+  .habit-submit {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .habits-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .habits-layout.is-create-open {
+    grid-template-columns: 1fr;
+  }
+}
