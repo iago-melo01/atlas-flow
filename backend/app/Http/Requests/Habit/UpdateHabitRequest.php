@@ -22,6 +22,12 @@ class UpdateHabitRequest extends FormRequest{
       */
      public function rules(): array
      {
+
+        $habit = $this->route('habit');
+
+        $touchingCadence = $this->has('cadence_type') || $this->has('cadence_config');
+
+        $effectiveType = CadenceType::tryFrom((string) $this->input('cadence_type', '')) ?? $habit->cadence_type;
          return [
              'name' => ['sometimes', 'string', 'max:255'],
              'description' => ['sometimes', 'nullable', 'string', 'max:255'],
@@ -29,10 +35,10 @@ class UpdateHabitRequest extends FormRequest{
              'cadence_type' => ['sometimes', 'string', Rule::in(CadenceType::values())],
              'cadence_config' => ['sometimes', 'nullable', 'array'],
 
-             'cadence_config.days_of_week' => ['required_if:cadence_type,weekly', 'array', 'min:1', 'max:7'],
+             'cadence_config.days_of_week' => [Rule::requiredIf($touchingCadence && $effectiveType === CadenceType::WEEKLY), 'array', 'min:1', 'max:7'],
              'cadence_config.days_of_week.*' => ['integer', 'between:0,6', 'distinct'],
 
-             'cadence_config.times_per_week' => ['required_if:cadence_type,custom', 'integer', 'between:1,7' ],
+             'cadence_config.times_per_week' => [Rule::requiredIf($touchingCadence && $effectiveType === CadenceType::CUSTOM), 'integer', 'between:1,7' ],
          ];
      }
  
@@ -53,7 +59,7 @@ class UpdateHabitRequest extends FormRequest{
 
              'cadence_config.array' => 'A configuração da cadência deve ser um objeto',
 
-             'cadence_config.days_of_week.required_if' => 'Escolha pelo menos um dia da semana',
+             'cadence_config.days_of_week.required' => 'Escolha pelo menos um dia da semana',
              'cadence_config.days_of_week.array' => 'Os dias da semana devem ser uma lista',
              'cadence_config.days_of_week.min' => 'Escolha pelo menos um dia da semana',
              'cadence_config.days_of_week.max' => 'Escolha no máximo 7 dias da semana',
@@ -62,7 +68,7 @@ class UpdateHabitRequest extends FormRequest{
              'cadence_config.days_of_week.*.between' => 'Cada dia da semana deve estar entre 0 (domingo) e 6 (sábado)',
              'cadence_config.days_of_week.*.distinct' => 'Não repita o mesmo dia da semana',
 
-             'cadence_config.times_per_week.required_if' => 'Informe quantas vezes na semana',
+             'cadence_config.times_per_week.required' => 'Informe quantas vezes na semana',
              'cadence_config.times_per_week.integer' => 'A quantidade de vezes na semana deve ser um número',
              'cadence_config.times_per_week.between' => 'Informe entre 1 e 7 vezes na semana',
          ];
