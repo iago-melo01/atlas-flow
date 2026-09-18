@@ -13,8 +13,6 @@ class UpdateHabitController extends Controller  {
     public function update(UpdateHabitRequest $request, Habit $habit) 
     {
         $data = $request->validated();
-        $this->authorize('update', $habit);
-
 
         $this->habitService->update($habit, $data);
 

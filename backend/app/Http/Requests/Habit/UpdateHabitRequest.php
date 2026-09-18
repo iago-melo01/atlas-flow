@@ -12,7 +12,8 @@ class UpdateHabitRequest extends FormRequest{
      */
      public function authorize(): bool
      {
-         return true;
+         return $this->user()->can('update', $this->route('habit')); // checka se o usuario tem permissao de atualizar esse model
+         //ela consulta a policy equivalente ao model passado como segundo parametro do metodo can()
      }
      /**
       * Get the validation rules that apply to the request.
