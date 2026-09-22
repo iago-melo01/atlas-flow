@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Habit\UpdateHabitTemplateController;
+use App\Http\Controllers\HabitTemplate\UpdateHabitTemplateController;
 use App\Http\Controllers\HabitTemplate\CreateHabitTemplateController;
 use App\Http\Controllers\HabitTemplate\DeleteHabitTemplateController;
 use App\Http\Controllers\HabitTemplate\ListHabitTemplateController;
