@@ -15,7 +15,7 @@ class HabitTemplateService{
         });
     }
 
-    public function list(){
+    public function listAll(){
         return HabitTemplate::all()
         ->where('is_active', true);
     }

@@ -14,12 +14,11 @@ class ListHabitTemplateController extends Controller
 
     public function list()
     {
-        $this->authorize('create', HabitTemplate::class);
-        $data['user_id'] = Auth::id();
-        $habitTemplate = $this->habitTemplateService->delete();
+        $this->authorize('viewAny', HabitTemplate::class);
 
+        $habitTemplateList = $habitTemplateService->listAll();
+        
         return response()->json([
-            'message' => 'Template de hábito deletado com sucesso',
             'habit' => $habitTemplate,
         ], 201);
     }
