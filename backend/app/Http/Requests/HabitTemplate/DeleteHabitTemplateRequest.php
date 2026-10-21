@@ -6,7 +6,7 @@ use App\Enums\CadenceType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CreateHabitTemplateRequest extends FormRequest{
+class DeleteHabitTemplateRequest extends FormRequest{
      /**
      * Determine if the user is authorized to make this request.
      */
