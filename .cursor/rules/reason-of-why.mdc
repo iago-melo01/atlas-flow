@@ -1,0 +1,8 @@
+---
+description: Sempre explique o porquê das decisões técnicas e das mudanças feitas.
+alwaysApply: true
+---
+
+# Reason of Why
+
+Sempre procure responder o porquê das coisas. Exemplo: o porquê de tal tecnologia precisar ser implementada, ou então o porquê algo foi feito. E procure ser mais detalhista nas respostas.

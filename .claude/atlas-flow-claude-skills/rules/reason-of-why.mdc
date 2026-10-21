@@ -1,0 +1,6 @@
+---
+description: Sempre explicar o porquê das decisões e implementações
+alwaysApply: true
+---
+
+Sempre procure responder o porquê das coisas. Exemplo: O porquê de tal tecnologia precisar ser implementada, ou então o porquê algo foi feito. E procure ser mais detalhista nas respostas.

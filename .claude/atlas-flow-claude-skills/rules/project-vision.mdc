@@ -1,0 +1,53 @@
+---
+description: Visão do produto e diretrizes de implementação do Atlas Flow
+alwaysApply: true
+---
+
+# Visão do Atlas Flow
+
+Atlas Flow é um app web para execução da vida pessoal. O usuário deve entrar todos os dias para ver o plano, registrar a execução e acompanhar sua evolução em hábitos, treinos, dieta, finanças e metas.
+
+## Diretrizes Gerais
+
+- O projeto é web-first e deve usar Laravel como API/backend.
+- O frontend deve ser uma aplicação separada em React.
+- Tudo deve ser salvo no backend desde o início; login é obrigatório.
+- A experiência deve ser minimalista, limpa, produtiva, escura quando fizer sentido e fácil de escanear.
+- Após o login, o usuário deve cair direto no dashboard.
+- O dashboard é o centro do produto: todas as áreas devem alimentar a visão do dia e o progresso.
+- Evite telas densas demais; prefira cards, progresso, checks, resumos e ações diretas.
+
+## Domínios Principais
+
+- Hábitos: criação manual, ícones/emojis, check-ins, cadência diária/semanal/customizada e streaks que zeram ao falhar um dia obrigatório.
+- Treinos: fichas, grupos musculares, modo execução, exercícios, séries, kg, repetições e progresso do treino.
+- Histórico de treino: armazenar os últimos 3 treinos com exercício, carga e repetições de cada série para comparativos de evolução.
+- Dieta: refeições por horário, alimentos cadastrados manualmente, macros sempre em gramas e calorias calculadas pelos macros informados.
+- Finanças: saldo geral, entradas, saídas, categorias, movimentações e metas financeiras apenas informativas (sem bloquear saldo livre).
+- Assistente Atlas: resumo do dia, sugestões e chat consultivo com base nos dados do usuário.
+
+## IA no MVP
+
+- A IA entra de verdade no MVP como assistente consultivo, não como agente autônomo.
+- Provider inicial: OpenRouter com modelo `openrouter/free` (custo zero para uso pessoal).
+- Sem fine-tuning; usar prompts + dados resumidos pelo backend.
+- O frontend nunca chama provedores de IA diretamente; o Laravel monta o contexto e intermediaria.
+- Enviar dados resumidos ao modelo, não registros brutos.
+- Implementar fallback para respostas baseadas em regras se o provider falhar.
+- Providers configuráveis via ambiente: `rules`, `openrouter`, `openai`, `ollama`.
+- A IA não altera dados automaticamente no MVP; apenas sugere.
+- Ao escalar ou vender, migrar para OpenAI ou provider pago.
+
+## MVP
+
+- Incluir login/cadastro, dashboard, hábitos, treinos com os últimos 3 históricos, comparativos de evolução, dieta manual, finanças com saldo geral, histórico básico de progresso e Assistente Atlas básico.
+- Notificações, gráficos avançados, ranking, premium, integrações, timer de descanso e banco de alimentos ficam para depois.
+- O usuário não precisa informar peso, altura, renda ou rotina no primeiro acesso; ele constrói a própria rotina com sugestões básicas do app.
+
+## Decisões de Produto
+
+- Priorize o que faz o usuário executar o dia atual e voltar no dia seguinte.
+- Modele os dados de forma estruturada para permitir histórico, comparativos e IA no futuro.
+- Não construa módulos isolados: hábitos, treinos, dieta e finanças devem aparecer no dashboard e no progresso.
+- Como o produto pode ser vendido futuramente, evite atalhos que inviabilizem múltiplos usuários, autenticação e isolamento de dados.
+- Mantenha a separação entre API e frontend clara: regras de negócio e persistência ficam no backend; experiência, estado de UI e consumo da API ficam no frontend.
