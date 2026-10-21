@@ -16,12 +16,12 @@ class CreateHabitTemplateController extends Controller
     {
         $this->authorize('create', HabitTemplate::class);
         $data = $request->validated();
-        $data['user_id'] = Auth::id();
+
         $habitTemplate = $this->habitTemplateService->create($data);
 
         return response()->json([
             'message' => 'Template de hábito criado com sucesso',
-            'habit' => $habitTemplate,
+            'habit_template' => $habitTemplate,
         ], 201);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\HabitTemplate;
-use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\Controller;
 
 use App\Models\Habits\HabitTemplate;

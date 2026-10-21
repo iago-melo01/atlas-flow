@@ -13,11 +13,11 @@ class DeleteHabitTemplateController extends Controller
 {
     public function __construct(protected HabitTemplateService $habitTemplateService) {}
 
-    public function delete(Request $request)
+    public function delete(HabitTemplate $habitTemplate) // é passado como parametro pq
+    // o route binding ja traz ele injetado aq
     {
-        $this->authorize('create', HabitTemplate::class);
+        $this->authorize('delete', $habitTemplate);
         
-        $habitTemplate = $request->route('habit');
         $this->habitTemplateService->delete($habitTemplate);
 
         return response()->json([
