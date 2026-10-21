@@ -7,20 +7,21 @@ use App\Http\Controllers\Controller;
 use App\Models\Habits\HabitTemplate;
 
 use App\Services\HabitTemplate\HabitTemplateService;
+use Illuminate\Http\Request;
 
 class DeleteHabitTemplateController extends Controller
 {
     public function __construct(protected HabitTemplateService $habitTemplateService) {}
 
-    public function delete()
+    public function delete(Request $request)
     {
         $this->authorize('create', HabitTemplate::class);
-        $data['user_id'] = Auth::id();
-        $habitTemplate = $this->habitTemplateService->delete();
+        
+        $habitTemplate = $request->route('habit');
+        $this->habitTemplateService->delete($habitTemplate);
 
         return response()->json([
             'message' => 'Template de hábito deletado com sucesso',
-            'habit' => $habitTemplate,
-        ], 201);
+        ], 200);
     }
 }

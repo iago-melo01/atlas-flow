@@ -10,8 +10,11 @@ Route::prefix('/habittemplate')->group(function () {
     Route::middleware('auth:sanctum')->group(function (){
         Route::get('/list', [ListHabitTemplateController::class, 'list']);
         Route::post('/create', [CreateHabitTemplateController::class, 'store']);
-        Route::put('/{habit:uuid}', [UpdateHabitTemplateController::class, 'update']);
-        Route::delete('/{habit:uuid}',[DeleteHabitTemplateController::class, 'delete'] );
+        Route::put('/{habitTemplate:uuid}', [UpdateHabitTemplateController::class, 'update']);
+
+        //tipo do parametro 'habit' , e coluna do parametro 'uuid' || o laravel faz 
+        //isso pra ja executar um Habit::where(uuid) automaticamente
+        Route::delete('/{habitTemplate:uuid}',[DeleteHabitTemplateController::class, 'delete'] );
     });
 });
 

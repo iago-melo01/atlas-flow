@@ -16,10 +16,10 @@ class ListHabitTemplateController extends Controller
     {
         $this->authorize('viewAny', HabitTemplate::class);
 
-        $habitTemplateList = $habitTemplateService->listAll();
+        $habitTemplateList = $this->habitTemplateService->listAll();
         
         return response()->json([
-            'habit' => $habitTemplate,
-        ], 201);
+            'habits' => $habitTemplateList,
+        ], 200);
     }
 }

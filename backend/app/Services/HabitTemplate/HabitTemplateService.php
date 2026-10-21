@@ -23,4 +23,8 @@ class HabitTemplateService{
     public function delete(HabitTemplate $template){
         $template->delete();
     }
+
+    public function update(HabitTemplate $template, array $data){
+        
+    }
 }

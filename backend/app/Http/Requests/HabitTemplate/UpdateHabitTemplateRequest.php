@@ -22,11 +22,11 @@ class UpdateHabitTemplateRequest extends FormRequest{
      public function rules(): array
      {
          return [
-             'name' => ['required', 'string', 'max:255'],
-             'description' => ['nullable', 'string', 'max:255'],
-             'icon' => ['required', 'string', 'max:16' ],
-             'cadence_type' => ['required', 'string', Rule::in(CadenceType::values())],
-             'cadence_config' => ['nullable', 'array'],
+             'name' => ['sometimes', 'string', 'max:255'],
+             'description' => ['sometimes', 'string', 'max:255'],
+             'icon' => ['sometimes', 'string', 'max:16' ],
+             'cadence_type' => ['sometimes', 'string', Rule::in(CadenceType::values())],
+             'cadence_config' => ['sometimes', 'array'],
              
              'cadence_config.days_of_week' => ['required_if:cadence_type,weekly', // se o cadence_type for igual a 'weekly'
              'array', 'min:1', 'max:7'],
