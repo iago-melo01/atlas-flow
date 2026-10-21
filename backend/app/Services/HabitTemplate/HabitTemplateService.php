@@ -8,16 +8,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class HabitTemplateService{
+    
     public function create(array $data): Collection {
-
-        return DB::transaction( function () use ($data){
-            return Habit::create($data);
-        });
+        return HabitTemplate::create($data);
     }
 
     public function listAll(){
-        return HabitTemplate::all()
-        ->where('is_active', true);
+        return HabitTemplate::query()
+        ->where('is_active', true)
+        ->get();
     }
     
     public function delete(HabitTemplate $template){
@@ -25,6 +24,7 @@ class HabitTemplateService{
     }
 
     public function update(HabitTemplate $template, array $data){
-        
+        $template->update($data);
+        return $template;
     }
 }
