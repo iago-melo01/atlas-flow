@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use Illuminate\Support\Arr;
+
 enum CadenceType: string
 {
     case DAILY = 'daily';
@@ -29,6 +31,17 @@ enum CadenceType: string
             'value' => $case->value,
             'label' => $case->label(),
         ])->toArray();
+    }
+
+    public function normalizeConfig(?array $config): ?array
+    {
+        $config ??= [];
+
+        return match ($this) {
+            self::DAILY => null,
+            self::WEEKLY => Arr::only($config, ['days_of_week']),
+            self::CUSTOM => Arr::only($config, ['times_per_week']),
+        };
     }
 
 
