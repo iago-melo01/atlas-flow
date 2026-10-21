@@ -2,6 +2,7 @@
 
 namespace App\Models\Habits;
 
+use App\Enums\CadenceType;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ class HabitTemplate extends Model
     protected function casts(): array
     {
         return [
+            'cadence_type' => CadenceType::class,
             'cadence_config' => 'array',
             'is_active' => 'boolean',
         ];
