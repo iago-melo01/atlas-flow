@@ -12,8 +12,8 @@ Route::prefix('/habittemplate')->group(function () {
         Route::post('/create', [CreateHabitTemplateController::class, 'store']);
         Route::put('/{habitTemplate:uuid}', [UpdateHabitTemplateController::class, 'update']);
 
-        //tipo do parametro 'habit' , e coluna do parametro 'uuid' || o laravel faz 
-        //isso pra ja executar um Habit::where(uuid) automaticamente
+        //tipo do parametro 'habitTemplate' , e coluna do parametro 'uuid' || o laravel faz 
+        //isso pra ja executar um HabitTemplate::where(uuid) automaticamente
         Route::delete('/{habitTemplate:uuid}',[DeleteHabitTemplateController::class, 'delete'] );
     });
 });

@@ -8,3 +8,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 require __DIR__ . '/habit.php';
+require __DIR__ . '/habittemplate.php';
