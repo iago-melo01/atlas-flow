@@ -3,6 +3,7 @@
 namespace App\Services\Habit;
 use App\Enums\CadenceType;
 use App\Models\Habits\Habit;
+use App\Models\Habits\HabitTemplate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,14 @@ class HabitService
 
     public function create(array $data): Habit
     {
+        $template_uuid = Arr::pull($data, 'habit_template_uuid');
+
+        if($template_uuid){
+            $data['habit_template_id'] = HabitTemplate::query()
+            ->where('uuid', $template_uuid)
+            ->value('id');
+        }
+
         return DB::transaction(function () use ($data) {
             return Habit::create($data);
         });
