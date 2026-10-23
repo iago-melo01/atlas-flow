@@ -1,27 +1,67 @@
+import { isAxiosError } from 'axios'
 import { type FormEvent, useState } from 'react'
-import { createHabit } from '../../lib/habits'
 import { CADENCE_OPTIONS, WEEKDAY_OPTIONS, formatCadenceDraft } from '../../lib/habit-cadence'
 import { extractValidationErrors, firstFieldError } from '../../lib/validation'
-import type { CadenceType, CreateHabitPayload, Habit } from '../../types/habit'
+import type { CadenceConfig, CadenceType } from '../../types/habit'
+import type { HabitTemplate } from '../../types/habit-template'
 
-const ICON_SHORTCUTS = ['💧', '🏋️', '📚', '🧘', '🚶'] as const
+const ICON_SHORTCUTS: readonly string[] = ['💧', '🏋️', '📚', '🧘', '🚶']
 
-type HabitCreateFormProps = {
-  onCreated: (habit: Habit) => void
+const VALIDATED_FIELDS = [
+  'name',
+  'description',
+  'icon',
+  'cadence_type',
+  'cadence_config.days_of_week',
+  'cadence_config.times_per_week',
+]
+
+export type HabitFormValues = {
+  name: string
+  description: string | null
+  icon: string
+  cadence_type: CadenceType
+  cadence_config: CadenceConfig | null
+}
+
+export type HabitFormSubmit = HabitFormValues & {
+  habit_template_uuid: string | null
+}
+
+type HabitFormProps = {
+  onSubmit: (values: HabitFormSubmit) => Promise<void>
+  submitLabel: string
+  submittingLabel: string
+  initialValues?: HabitFormValues
+  templates?: HabitTemplate[]
   onCancel?: () => void
   isClosing?: boolean
 }
 
-export function HabitCreateForm({ onCreated, onCancel, isClosing = false }: HabitCreateFormProps) {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [icon, setIcon] = useState<string>(ICON_SHORTCUTS[0])
-  const [cadence_type, setCadenceType] = useState<CadenceType>('daily')
-  const [days_of_week, setDaysOfWeek] = useState<number[]>([])
-  const [times_per_week, setTimesPerWeek] = useState(3)
+export function HabitForm({
+  onSubmit,
+  submitLabel,
+  submittingLabel,
+  initialValues,
+  templates = [],
+  onCancel,
+  isClosing = false,
+}: HabitFormProps) {
+  const [name, setName] = useState(initialValues?.name ?? '')
+  const [description, setDescription] = useState(initialValues?.description ?? '')
+  const [icon, setIcon] = useState<string>(initialValues?.icon ?? ICON_SHORTCUTS[0])
+  const [cadence_type, setCadenceType] = useState<CadenceType>(initialValues?.cadence_type ?? 'daily')
+  const [days_of_week, setDaysOfWeek] = useState<number[]>(
+    initialValues?.cadence_config?.days_of_week ?? [],
+  )
+  const [times_per_week, setTimesPerWeek] = useState(initialValues?.cadence_config?.times_per_week ?? 3)
+  const [template_uuid, setTemplateUuid] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // O ícone de um template ou de um hábito existente pode não estar entre os atalhos.
+  const icon_options = ICON_SHORTCUTS.includes(icon) ? ICON_SHORTCUTS : [icon, ...ICON_SHORTCUTS]
 
   function toggleDay(day: number) {
     setDaysOfWeek((current) =>
@@ -31,6 +71,35 @@ export function HabitCreateForm({ onCreated, onCancel, isClosing = false }: Habi
 
   function stepTimes(delta: number) {
     setTimesPerWeek((current) => Math.min(7, Math.max(1, current + delta)))
+  }
+
+  function applyTemplate(template: HabitTemplate) {
+    if (template.uuid === template_uuid) {
+      setTemplateUuid(null)
+      return
+    }
+
+    setTemplateUuid(template.uuid)
+    setName(template.name)
+    setDescription(template.description ?? '')
+    setIcon(template.icon)
+    setCadenceType(template.cadence_type)
+    setDaysOfWeek(template.cadence_config?.days_of_week ?? [])
+    setTimesPerWeek(template.cadence_config?.times_per_week ?? 3)
+    setFieldErrors({})
+    setFormError(null)
+  }
+
+  function buildCadenceConfig(): CadenceConfig | null {
+    if (cadence_type === 'weekly') {
+      return { days_of_week: [...days_of_week].sort((left, right) => left - right) }
+    }
+
+    if (cadence_type === 'custom') {
+      return { times_per_week }
+    }
+
+    return null
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -50,41 +119,22 @@ export function HabitCreateForm({ onCreated, onCancel, isClosing = false }: Habi
       return
     }
 
-    const payload: CreateHabitPayload = {
-      name: name.trim(),
-      description: description.trim(),
-      icon: icon.trim(),
-      cadence_type,
-    }
-
-    if (cadence_type === 'weekly') {
-      payload.cadence_config = {
-        days_of_week: [...days_of_week].sort((left, right) => left - right),
-      }
-    }
-
-    if (cadence_type === 'custom') {
-      payload.cadence_config = {
-        times_per_week,
-      }
-    }
+    const trimmed_description = description.trim()
 
     try {
-      const habit = await createHabit(payload)
-      onCreated(habit)
+      await onSubmit({
+        name: name.trim(),
+        description: trimmed_description === '' ? null : trimmed_description,
+        icon: icon.trim(),
+        cadence_type,
+        cadence_config: buildCadenceConfig(),
+        habit_template_uuid: template_uuid,
+      })
     } catch (error) {
       const validation_errors = extractValidationErrors(error)
       const next_field_errors: Record<string, string> = {}
-      const fields = [
-        'name',
-        'description',
-        'icon',
-        'cadence_type',
-        'cadence_config.days_of_week',
-        'cadence_config.times_per_week',
-      ]
 
-      for (const field of fields) {
+      for (const field of VALIDATED_FIELDS) {
         const message = firstFieldError(validation_errors, field)
         if (message) {
           next_field_errors[field] = message
@@ -94,7 +144,11 @@ export function HabitCreateForm({ onCreated, onCancel, isClosing = false }: Habi
       setFieldErrors(next_field_errors)
 
       if (Object.keys(next_field_errors).length === 0) {
-        setFormError('Não foi possível adicionar à rotina. Tente novamente.')
+        setFormError(
+          isAxiosError(error) && error.response?.status === 403
+            ? 'Você não tem permissão para essa ação.'
+            : 'Não foi possível salvar. Tente novamente.',
+        )
       }
     } finally {
       setIsSubmitting(false)
@@ -109,10 +163,34 @@ export function HabitCreateForm({ onCreated, onCancel, isClosing = false }: Habi
       onSubmit={(event) => void handleSubmit(event)}
       noValidate
     >
+      {templates.length > 0 ? (
+        <div className="habit-templates" role="group" aria-label="Começar de um modelo">
+          <p className="habit-templates-label">Começar de um modelo</p>
+          <div className="habit-templates-row">
+            {templates.map((template) => {
+              const is_selected = template.uuid === template_uuid
+
+              return (
+                <button
+                  key={template.uuid}
+                  className={is_selected ? 'habit-template-chip is-selected' : 'habit-template-chip'}
+                  type="button"
+                  aria-pressed={is_selected}
+                  onClick={() => applyTemplate(template)}
+                >
+                  <span aria-hidden="true">{template.icon}</span>
+                  {template.name}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      ) : null}
+
       <article className="habit-draft">
         <div className="habit-card-head">
           <div className="habit-icon-picker" role="group" aria-label="Ícone da rotina">
-            {ICON_SHORTCUTS.map((shortcut) => (
+            {icon_options.map((shortcut) => (
               <button
                 key={shortcut}
                 className={shortcut === icon ? 'is-selected' : undefined}
@@ -149,19 +227,18 @@ export function HabitCreateForm({ onCreated, onCancel, isClosing = false }: Habi
         ) : null}
 
         <label className="sr-only" htmlFor="habit-description">
-          O que acontece nesse hábito
+          O que acontece nesse hábito (opcional)
         </label>
         <input
           id="habit-description"
           className="habit-draft-caption"
           name="description"
           maxLength={255}
-          placeholder="O que acontece nesse hábito"
+          placeholder="O que acontece nesse hábito (opcional)"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           aria-invalid={Boolean(fieldErrors.description)}
           aria-describedby={fieldErrors.description ? 'habit-description-error' : undefined}
-          required
         />
         {fieldErrors.description ? (
           <p id="habit-description-error" className="habit-field-error" role="alert">
@@ -270,7 +347,7 @@ export function HabitCreateForm({ onCreated, onCancel, isClosing = false }: Habi
           </button>
         ) : null}
         <button className="habit-submit" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Adicionando…' : 'Adicionar à rotina'}
+          {isSubmitting ? submittingLabel : submitLabel}
         </button>
       </div>
     </form>

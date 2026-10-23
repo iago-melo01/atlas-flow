@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
+import { AppTopbar } from '../components/AppTopbar'
 import { listHabits } from '../lib/habits'
-import atlasLogo from '../assets/atlas_logo.png'
 import type { Habit } from '../types/habit'
 import '../styles/auth.css'
 import '../styles/dashboard.css'
 
 export function DashboardPage() {
-  const { user, logout } = useAuth()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { user } = useAuth()
   const [habits, setHabits] = useState<Habit[]>([])
   const [isLoadingHabits, setIsLoadingHabits] = useState(true)
 
@@ -40,20 +39,6 @@ export function DashboardPage() {
     }
   }, [])
 
-  async function handleLogout() {
-    if (isLoggingOut) {
-      return
-    }
-
-    setIsLoggingOut(true)
-
-    try {
-      await logout()
-    } finally {
-      setIsLoggingOut(false)
-    }
-  }
-
   const preview_icons = habits.slice(0, 3).map((habit) => habit.icon).join(' ')
   const first_habit_name = habits[0]?.name
   const habits_summary = isLoadingHabits
@@ -66,27 +51,7 @@ export function DashboardPage() {
 
   return (
     <div className="dashboard-shell">
-      <header className="dashboard-topbar">
-        <Link className="dashboard-brand" to="/dashboard" aria-label="Atlas Flow dashboard">
-          <img src={atlasLogo} alt="" className="dashboard-brand-mark" />
-          <span>Atlas Flow</span>
-        </Link>
-
-        <div className="dashboard-actions">
-          <Link className="dashboard-nav-link" to="/habits">
-            Hábitos
-          </Link>
-          <span className="dashboard-user">{user?.name}</span>
-          <button
-            className="dashboard-logout"
-            type="button"
-            onClick={() => void handleLogout()}
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? 'Saindo...' : 'Sair'}
-          </button>
-        </div>
-      </header>
+      <AppTopbar />
 
       <main className="dashboard-main">
         <section className="dashboard-hero">

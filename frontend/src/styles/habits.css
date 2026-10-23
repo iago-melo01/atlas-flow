@@ -100,6 +100,88 @@
   gap: 12px;
 }
 
+.habit-card-actions {
+  display: flex;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.habit-card-action {
+  padding: 0;
+  border: 0;
+  color: var(--color-muted);
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  cursor: pointer;
+}
+
+.habit-card-action:hover {
+  color: var(--color-text);
+}
+
+.habit-card-action.is-danger:hover {
+  color: var(--color-danger);
+}
+
+.habit-card-action:focus-visible,
+.habit-template-chip:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 3px;
+}
+
+.habits-action-error {
+  margin: 0 0 16px;
+}
+
+.habit-templates {
+  display: grid;
+  gap: 10px;
+}
+
+.habit-templates-label {
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.habit-templates-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.habit-template-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-muted);
+  font-size: 14px;
+  background: var(--color-input);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.habit-template-chip:hover {
+  color: var(--color-text);
+}
+
+.habit-template-chip.is-selected {
+  border-color: rgba(54, 209, 118, 0.55);
+  color: var(--color-text);
+  background: var(--color-surface-elevated);
+}
+
 .habit-card-icon {
   font-size: 28px;
   line-height: 1;
@@ -416,6 +498,7 @@
   .habit-icon-picker button,
   .habit-week button,
   .habit-cadence-tabs button,
+  .habit-template-chip,
   .habit-submit {
     transition: none;
   }

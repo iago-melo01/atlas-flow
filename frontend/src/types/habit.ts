@@ -26,13 +26,21 @@ export type HabitListResponse = {
 
 export type CreateHabitPayload = {
   name: string
-  description: string
+  description: string | null
   icon: string
   cadence_type: CadenceType
   cadence_config?: CadenceConfig | null
+  habit_template_uuid?: string | null
 }
 
 export type CreateHabitResponse = {
+  message: string
+  habit: Habit
+}
+
+export type UpdateHabitPayload = Partial<Omit<CreateHabitPayload, 'habit_template_uuid'>>
+
+export type UpdateHabitResponse = {
   message: string
   habit: Habit
 }

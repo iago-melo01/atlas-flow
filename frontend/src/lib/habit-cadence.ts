@@ -1,4 +1,9 @@
-import type { CadenceType, Habit } from '../types/habit'
+import type { CadenceConfig, CadenceType } from '../types/habit'
+
+export type CadenceSource = {
+  cadence_type: CadenceType
+  cadence_config: CadenceConfig | null
+}
 
 export const CADENCE_OPTIONS: Array<{ value: CadenceType; label: string }> = [
   { value: 'daily', label: 'Diário' },
@@ -16,11 +21,11 @@ export const WEEKDAY_OPTIONS: Array<{ value: number; label: string }> = [
   { value: 6, label: 'Sáb' },
 ]
 
-export function formatCadence(habit: Habit): string {
+export function formatCadence(source: CadenceSource): string {
   return formatCadenceDraft(
-    habit.cadence_type,
-    habit.cadence_config?.days_of_week,
-    habit.cadence_config?.times_per_week,
+    source.cadence_type,
+    source.cadence_config?.days_of_week,
+    source.cadence_config?.times_per_week,
   )
 }
 
