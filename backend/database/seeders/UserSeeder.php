@@ -11,6 +11,8 @@ class UserSeeder extends Seeder
 
     public const OTHER_EMAIL = 'maria@example.com';
 
+    public const ADMIN_EMAIL = 'admin@example.com';
+
     public const PASSWORD = 'password';
 
     /**
@@ -34,6 +36,16 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Maria Isolamento',
                 'role' => 'user',
+                'password' => self::PASSWORD,
+                'email_verified_at' => now(),
+            ],
+        );
+
+        User::query()->updateOrCreate(
+            ['email' => self::ADMIN_EMAIL],
+            [
+                'name' => 'Atlas Admin',
+                'role' => 'admin',
                 'password' => self::PASSWORD,
                 'email_verified_at' => now(),
             ],
