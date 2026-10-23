@@ -19,7 +19,7 @@ class ListHabitTemplateController extends Controller
         $habitTemplateList = $this->habitTemplateService->listAll();
         
         return response()->json([
-            'habits' => $habitTemplateList,
+            'habit_templates' => $habitTemplateList,
         ], 200);
     }
 }

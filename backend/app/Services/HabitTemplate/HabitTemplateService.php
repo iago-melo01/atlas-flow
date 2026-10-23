@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class HabitTemplateService{
     
-    public function create(array $data): Collection {
+    public function create(array $data): HabitTemplate {
         return HabitTemplate::create($data);
     }
 
