@@ -119,6 +119,7 @@ export function HabitsPage() {
   }
 
   const is_creating = isFormOpen && !isFormClosing && editing_habit === null
+  const is_create_form_visible = isFormOpen && editing_habit === null
 
   return (
     <div className="dashboard-shell">
@@ -141,7 +142,7 @@ export function HabitsPage() {
           </button>
         </section>
 
-        <section className={isFormOpen ? 'habits-layout is-create-open' : 'habits-layout'}>
+        <section className={is_create_form_visible ? 'habits-layout is-create-open' : 'habits-layout'}>
           <div>
             <HabitList
               items={habits}
@@ -155,15 +156,25 @@ export function HabitsPage() {
                 void loadHabits()
               }}
               onEdit={(habit) => openForm(habit)}
+              editingUuid={isFormOpen ? editing_habit?.uuid : null}
+              renderEditor={(habit) => (
+                <HabitForm
+                  key={habit.uuid}
+                  initialValues={habit}
+                  submitLabel="Salvar alterações"
+                  submittingLabel="Salvando…"
+                  isClosing={isFormClosing}
+                  onSubmit={handleSubmit}
+                  onCancel={closeForm}
+                />
+              )}
             />
           </div>
-          {isFormOpen ? (
+          {is_create_form_visible ? (
             <HabitForm
-              key={editing_habit?.uuid ?? 'new'}
-              initialValues={editing_habit ?? undefined}
-              templates={editing_habit ? [] : templates}
-              submitLabel={editing_habit ? 'Salvar alterações' : 'Adicionar à rotina'}
-              submittingLabel={editing_habit ? 'Salvando…' : 'Adicionando…'}
+              templates={templates}
+              submitLabel="Adicionar à rotina"
+              submittingLabel="Adicionando…"
               isClosing={isFormClosing}
               onSubmit={handleSubmit}
               onCancel={closeForm}

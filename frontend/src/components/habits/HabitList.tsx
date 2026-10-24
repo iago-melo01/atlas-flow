@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { type CadenceSource, formatCadence } from '../../lib/habit-cadence'
 
 export type HabitListItem = CadenceSource & {
@@ -17,6 +18,8 @@ type HabitListProps<T extends HabitListItem> = {
   onRetry: () => void
   onEdit?: (item: T) => void
   onDelete?: (item: T) => void
+  editingUuid?: string | null
+  renderEditor?: (item: T) => ReactNode
 }
 
 export function HabitList<T extends HabitListItem>({
@@ -29,6 +32,8 @@ export function HabitList<T extends HabitListItem>({
   onRetry,
   onEdit,
   onDelete,
+  editingUuid,
+  renderEditor,
 }: HabitListProps<T>) {
   if (isLoading) {
     return <p className="habits-status">{loadingText}</p>
@@ -57,34 +62,39 @@ export function HabitList<T extends HabitListItem>({
     <ul className="habit-list">
       {items.map((item) => (
         <li key={item.uuid}>
-          <article className={item.uuid === highlightUuid ? 'habit-card is-just-added' : 'habit-card'}>
-            <div className="habit-card-head">
-              <span className="habit-card-icon" aria-hidden="true">
-                {item.icon}
-              </span>
-              <h2>{item.name}</h2>
-              {onEdit || onDelete ? (
-                <div className="habit-card-actions">
-                  {onEdit ? (
-                    <button className="habit-card-action" type="button" onClick={() => onEdit(item)}>
-                      Editar<span className="sr-only"> {item.name}</span>
-                    </button>
-                  ) : null}
-                  {onDelete ? (
-                    <button
-                      className="habit-card-action is-danger"
-                      type="button"
-                      onClick={() => onDelete(item)}
-                    >
-                      Excluir<span className="sr-only"> {item.name}</span>
-                    </button>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-            {item.description ? <p className="habit-card-description">{item.description}</p> : null}
-            <p className="habit-card-cadence">{formatCadence(item)}</p>
-          </article>
+          {/* O card em edição vira o próprio formulário, no mesmo lugar da lista. */}
+          {item.uuid === editingUuid && renderEditor ? (
+            renderEditor(item)
+          ) : (
+            <article className={item.uuid === highlightUuid ? 'habit-card is-just-added' : 'habit-card'}>
+              <div className="habit-card-head">
+                <span className="habit-card-icon" aria-hidden="true">
+                  {item.icon}
+                </span>
+                <h2>{item.name}</h2>
+                {onEdit || onDelete ? (
+                  <div className="habit-card-actions">
+                    {onEdit ? (
+                      <button className="habit-card-action" type="button" onClick={() => onEdit(item)}>
+                        Editar<span className="sr-only"> {item.name}</span>
+                      </button>
+                    ) : null}
+                    {onDelete ? (
+                      <button
+                        className="habit-card-action is-danger"
+                        type="button"
+                        onClick={() => onDelete(item)}
+                      >
+                        Excluir<span className="sr-only"> {item.name}</span>
+                      </button>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+              {item.description ? <p className="habit-card-description">{item.description}</p> : null}
+              <p className="habit-card-cadence">{formatCadence(item)}</p>
+            </article>
+          )}
         </li>
       ))}
     </ul>
