@@ -53,4 +53,7 @@ class HabitService
         return $habit;
     }
 
+    public function destroy(Habit $habit){
+        $habit->delete();
+    }
 }
