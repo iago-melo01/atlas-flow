@@ -4,7 +4,7 @@ namespace Tests\Feature\Auth;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-class NormalizedEmail extends AuthTestCase
+class NormalizedEmailTest extends AuthTestCase
 {
     use RefreshDatabase;
 
