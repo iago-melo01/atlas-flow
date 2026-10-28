@@ -15,6 +15,6 @@ class DeleteHabitController extends Controller
 
         $this->habitService->destroy($habit);
 
-        return response()->json(204);
+        return response()->noContent();
     }
 }
