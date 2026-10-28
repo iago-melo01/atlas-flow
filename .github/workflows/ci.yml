@@ -12,7 +12,7 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - name: Checkout do código
+      - name: Clona o repositório
         uses: actions/checkout@v4
       - name: Instalar PHP 8.4 
         uses: shivammathur/setup-php@v2
