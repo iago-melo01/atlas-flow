@@ -1,0 +1,32 @@
+name: atlasflow ci pipeline 
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+jobs: 
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      - name: Instalar PHP 8.4 
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_pgsql, mbstring, bcmath, zip
+          coverage: none
+      - name: Instalar dependencias
+        run: composer install --no-interaction --prefer-dist
+      - name: Preparar o ambiente (envs)
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      - name: Verificar sintaxe PHP
+        run: find . -name "*.php" -not -path "./vendor/*" -not -path "./storage/*" -not -path "./bootstrap/cache/*" -print0 | xargs -0 -n1 sh -c 'php -l "$0" || exit 1'
+      - name: Executa testes php 
+        run: php artisan test
