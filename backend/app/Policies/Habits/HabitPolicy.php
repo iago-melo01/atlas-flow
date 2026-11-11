@@ -48,4 +48,9 @@ class HabitPolicy
     return ($user->id === $habit->user_id);
   }
 
+  public function checkin(User $user, Habit $habit): bool 
+  {
+    return $user->id === $habit->user_id;
+  }
+
 }

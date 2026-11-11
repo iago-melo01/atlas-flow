@@ -3,6 +3,7 @@
 namespace App\Services\Habit;
 use App\Enums\CadenceType;
 use App\Models\Habits\Habit;
+use App\Models\Habits\HabitCheckIn;
 use App\Models\Habits\HabitTemplate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
@@ -55,5 +56,18 @@ class HabitService
 
     public function destroy(Habit $habit){
         $habit->delete();
+    }
+
+    public function checkIn(Habit $habit, int $userId): HabitCheckIn {
+        //o first or create primeiro verifica se existe um registro igual, se sim, não cria nada
+        // o parametro attributes[] vai ser usado para identificar se o registro existe
+        return $habit->checkIns()->firstOrCreate(
+            ['check_in_date' => today()->toDateString()],
+
+            //esse segundo parâmetro abaixo, são os dados extra que serão adicionados a instancia do $habit para a criação do novo registro de checkin
+            //caso não seja encontrado registro com os dados dos $attributes[]
+            ['user_id' => $userId, 'completed_at' => now()],
+
+            );
     }
 }
