@@ -16,7 +16,7 @@ class DeleteHabitCheckInController extends Controller
 
         $this->habitService->uncheck($habit);
 
-        return response()->json(204);
+        return response()->noContent();
     
     }
 }
