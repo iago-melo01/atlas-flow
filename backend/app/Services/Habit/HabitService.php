@@ -70,4 +70,9 @@ class HabitService
 
             );
     }
+
+    public function uncheck(Habit $habit): void 
+    {
+        $habit->checkIns()->whereDate('check_in_date', today())->delete();
+    }
 }
