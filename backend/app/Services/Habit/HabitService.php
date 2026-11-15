@@ -13,9 +13,15 @@ class HabitService
 {
     public function list(int $userId): Collection
     {
+
+    
         return Habit::query()
             ->where('user_id', $userId)
             ->where('is_active', true)
+            ->withExists([ //verifica se o relacionamento existe e adiciona um 
+                           //atributo Booleano às instâncias dos models retornados 
+                'checkIns as check_in_today' => fn ($q) => $q->where('check_in_date', today()->toDateString())
+            ])
             ->orderBy('name')
             ->get();
     }
