@@ -184,6 +184,80 @@
   padding: 18px;
 }
 
+.dashboard-progress {
+  height: 4px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-input);
+}
+
+.dashboard-progress div {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-success);
+  transition: width 200ms ease;
+}
+
+.dashboard-today {
+  margin-top: 14px;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 22px;
+  background: var(--color-surface);
+}
+
+.dashboard-today h2 {
+  margin: 0 0 6px;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dashboard-today ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dashboard-today li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.dashboard-today li:first-child {
+  border-top: 0;
+}
+
+.dashboard-today-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.dashboard-today-name {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-text);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-today li.is-done .dashboard-today-name {
+  color: var(--color-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-progress div {
+    transition: none;
+  }
+}
+
 @media (max-width: 900px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

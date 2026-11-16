@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { type CadenceSource, formatCadence } from '../../lib/habit-cadence'
+import { HabitCheckButton } from './HabitCheckButton'
 
 export type HabitListItem = CadenceSource & {
   uuid: string
@@ -20,6 +21,9 @@ type HabitListProps<T extends HabitListItem> = {
   onDelete?: (item: T) => void
   editingUuid?: string | null
   renderEditor?: (item: T) => ReactNode
+  isChecked?: (item: T) => boolean
+  isCheckPending?: (item: T) => boolean
+  onToggleCheck?: (item: T) => void
 }
 
 export function HabitList<T extends HabitListItem>({
@@ -34,6 +38,9 @@ export function HabitList<T extends HabitListItem>({
   onDelete,
   editingUuid,
   renderEditor,
+  isChecked,
+  isCheckPending,
+  onToggleCheck,
 }: HabitListProps<T>) {
   if (isLoading) {
     return <p className="habits-status">{loadingText}</p>
@@ -60,14 +67,32 @@ export function HabitList<T extends HabitListItem>({
 
   return (
     <ul className="habit-list">
-      {items.map((item) => (
+      {items.map((item) => {
+        const is_done = isChecked?.(item) ?? false
+        const card_class = [
+          'habit-card',
+          item.uuid === highlightUuid ? 'is-just-added' : null,
+          is_done ? 'is-done' : null,
+        ]
+          .filter(Boolean)
+          .join(' ')
+
+        return (
         <li key={item.uuid}>
           {/* O card em edição vira o próprio formulário, no mesmo lugar da lista. */}
           {item.uuid === editingUuid && renderEditor ? (
             renderEditor(item)
           ) : (
-            <article className={item.uuid === highlightUuid ? 'habit-card is-just-added' : 'habit-card'}>
+            <article className={card_class}>
               <div className="habit-card-head">
+                {onToggleCheck ? (
+                  <HabitCheckButton
+                    name={item.name}
+                    isDone={is_done}
+                    isPending={isCheckPending?.(item) ?? false}
+                    onToggle={() => onToggleCheck(item)}
+                  />
+                ) : null}
                 <span className="habit-card-icon" aria-hidden="true">
                   {item.icon}
                 </span>
@@ -96,7 +121,8 @@ export function HabitList<T extends HabitListItem>({
             </article>
           )}
         </li>
-      ))}
+        )
+      })}
     </ul>
   )
 }

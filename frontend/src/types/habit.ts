@@ -16,8 +16,20 @@ export type Habit = {
   cadence_config: CadenceConfig | null
   user_id: number
   habit_template_id: number | null
+  check_in_today: boolean
   created_at: string
   updated_at: string
+}
+
+export type HabitCheckIn = {
+  uuid: string
+  check_in_date: string
+  completed_at: string
+}
+
+export type CheckInResponse = {
+  message: string
+  check_in: HabitCheckIn
 }
 
 export type HabitListResponse = {

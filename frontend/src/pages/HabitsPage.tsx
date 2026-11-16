@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { AppTopbar } from '../components/AppTopbar'
 import { HabitForm, type HabitFormSubmit } from '../components/habits/HabitForm'
 import { HabitList } from '../components/habits/HabitList'
-import { createHabit, listHabits, updateHabit } from '../lib/habits'
+import { useHabitCheckIn } from '../hooks/useHabitCheckIn'
+import { createHabit, deleteHabit, listHabits, updateHabit } from '../lib/habits'
 import { listHabitTemplates } from '../lib/habit-templates'
 import type { Habit } from '../types/habit'
 import type { HabitTemplate } from '../types/habit-template'
@@ -15,10 +16,12 @@ export function HabitsPage() {
   const [templates, setTemplates] = useState<HabitTemplate[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isFormClosing, setIsFormClosing] = useState(false)
   const [editing_habit, setEditingHabit] = useState<Habit | null>(null)
   const [justSavedUuid, setJustSavedUuid] = useState<string | null>(null)
+  const { toggleCheckIn, isPending, checkInError } = useHabitCheckIn(setHabits)
 
   // Os setState ficam nos callbacks da promise para a função poder ser chamada direto do useEffect.
   const loadHabits = useCallback(
@@ -118,6 +121,29 @@ export function HabitsPage() {
     void loadHabits()
   }
 
+  async function handleDelete(habit: Habit) {
+    const confirmed = window.confirm(`Excluir o hábito "${habit.name}"? O histórico de check-ins dele também será apagado.`)
+
+    if (!confirmed) {
+      return
+    }
+
+    setActionError(null)
+
+    try {
+      await deleteHabit(habit.uuid)
+
+      if (editing_habit?.uuid === habit.uuid) {
+        closeForm()
+      }
+
+      setHabits((current) => current.filter((item) => item.uuid !== habit.uuid))
+    } catch {
+      setActionError('Não foi possível excluir o hábito.')
+    }
+  }
+
+  const visible_error = actionError ?? checkInError
   const is_creating = isFormOpen && !isFormClosing && editing_habit === null
   const is_create_form_visible = isFormOpen && editing_habit === null
 
@@ -142,6 +168,12 @@ export function HabitsPage() {
           </button>
         </section>
 
+        {visible_error ? (
+          <p className="habit-form-error habits-action-error" role="alert">
+            {visible_error}
+          </p>
+        ) : null}
+
         <section className={is_create_form_visible ? 'habits-layout is-create-open' : 'habits-layout'}>
           <div>
             <HabitList
@@ -156,6 +188,10 @@ export function HabitsPage() {
                 void loadHabits()
               }}
               onEdit={(habit) => openForm(habit)}
+              onDelete={(habit) => void handleDelete(habit)}
+              isChecked={(habit) => habit.check_in_today}
+              isCheckPending={(habit) => isPending(habit.uuid)}
+              onToggleCheck={(habit) => void toggleCheckIn(habit)}
               editingUuid={isFormOpen ? editing_habit?.uuid : null}
               renderEditor={(habit) => (
                 <HabitForm
