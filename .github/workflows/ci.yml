@@ -73,13 +73,64 @@ jobs:
       - name: Aguardar aplicação ficar pronta
         run: curl --retry 30 --retry-delay 2 --retry-all-errors -fsS http://localhost:8000/up
       
+      - name: Popular banco com usuários de testes
+        run: docker compose exec -T backend php artisan db:seed --force
+
+      - name: Autenticar usuário de teste para o ZAP
+        run: |
+          BASE=http://localhost:8000
+          FRONT=http://localhost:5173
+          JAR=cookies.txt
+
+          #1 Pede o cookie Xsrf token
+          curl -fsS -c $JAR -b $JAR -H "Referer: $FRONT/" $BASE/sanctum/csrf-cookie
+
+          #O valor do cookie vem codificado em url, o header precisa dele decodificado
+          read_xsrf() {
+            awk '$6=="XSRF-TOKEN"{print $7}' $JAR | python3 -c 'import sys,urllib.parse;print(urllib.parse.unquote(sys.stdin.read().strip()))'
+          }
+
+          #2 Faz o login com o usuário do UserSeeder
+          curl -fsS -c $JAR -b $JAR -X POST $BASE/login \
+            -H "Accept: application/json" -H "Content-Type: application/json" \
+            -H "Referer: $FRONT/" -H "X-XSRF-TOKEN: $(read_xsrf)" \
+            -d '{"email":"atlas@example.com","password":"password"}'
+
+          #3 O Login gera um token CSRF novo, então lê de novo
+          XSRF=$(read_xsrf)
+          COOKIE=$(awk '{sub(/^#HttpOnly_/,"")} !/^#/ && NF==7 {printf "%s%s=%s", sep, $6, $7; sep="; "}' $JAR)
+
+          #4 Testa se a sessão está funcionando. se der erro vai retornar 401
+          curl -fsS -o /dev/null -w "Rota protegida respondeu %{http_code}\n" \
+            -H "Cookie: $COOKIE" -H "Referer: $FRONT/" -H "Accept: application/json" \
+            $BASE/api/habit/list
+
+             # 5. Entrega os valores para o step do ZAP
+          echo "ZAP_AUTH_HEADER=Cookie" >> $GITHUB_ENV
+          echo "ZAP_AUTH_HEADER_VALUE=$COOKIE" >> $GITHUB_ENV
+          echo "ZAP_AUTH_HEADER_SITE=localhost" >> $GITHUB_ENV
+          echo "ZAP_XSRF=$XSRF" >> $GITHUB_ENV
+      
       - name: Scan dinâmico com OWASP ZAP
-        uses: zaproxy/action-full-scan@v0.12.0
+        uses: zaproxy/action-api-scan@v0.10.0
         with:
-          target: http://localhost:8000
+          target: http://localhost:8000/docs/api.json
           allow_issue_writing: false
           fail_action: false
           artifact_name: zap-report
+          cmd_options: >-
+            -z "-config replacer.full_list(0).description=referer
+            -config replacer.full_list(0).enabled=true
+            -config replacer.full_list(0).matchtype=REQ_HEADER
+            -config replacer.full_list(0).matchstr=Referer
+            -config replacer.full_list(0).regex=false
+            -config replacer.full_list(0).replacement=http://localhost:5173/
+            -config replacer.full_list(1).description=xsrf
+            -config replacer.full_list(1).enabled=true
+            -config replacer.full_list(1).matchtype=REQ_HEADER
+            -config replacer.full_list(1).matchstr=X-XSRF-TOKEN
+            -config replacer.full_list(1).regex=false
+            -config replacer.full_list(1).replacement=${{ env.ZAP_XSRF }}"
 
       - name: Validar alertas de risco alto
         run: |
