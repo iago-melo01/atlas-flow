@@ -7,12 +7,13 @@ use App\Enums\CadenceType;
 use App\Models\User;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable(['uuid', 'name', 'user_id', 'habit_template_id', 'description', 'icon', 'is_active', 'cadence_type', 'cadence_config'])]
 class Habit extends Model
 {
-    use HasUuid;
+    use HasUuid, HasFactory;
 
     protected function casts(): array
     {
