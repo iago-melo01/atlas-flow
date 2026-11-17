@@ -31,4 +31,25 @@ class HabitFactory extends Factory
             'cadence_config' => null
         ];
     }
+
+    public function inactive(): static
+    {
+        return $this->state(['is_active' => false]);
+    }
+
+    public function weekly(array $days = [1, 3, 5]): static
+    {
+        return $this->state([
+            'cadence_type' => CadenceType::WEEKLY,
+            'cadence_config' => ['days_of_week' => $days],
+        ]);
+    }
+
+    public function custom(int $times = 3): static
+    {
+        return $this->state([
+            'cadence_type' => CadenceType::CUSTOM,
+            'cadence_config' => ['times_per_week' => $times],
+        ]);
+    }
 }
